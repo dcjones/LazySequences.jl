@@ -189,12 +189,7 @@ end
 
 
 map(f::Function, ::Nothing) = nothing
-
-
-function map(f::Function, s::Seqable)
-    v = first(s)
-    v === nothing ? nothing : cons(f(v), @lazyseq map(f, rest(s)))
-end
+map(f::Function, s::Seqable) = cons(f(first(s)), @lazyseq map(f, rest(s)))
 
 
 function map(f::Function, s0::Seqable, s1::Seqable, ss::Seqable...)
