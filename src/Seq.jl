@@ -87,17 +87,6 @@ end
 # Lazy-seq
 # --------
 
-# This is no good, is it?
-# Now when we do cons(1, @lazyseq foo), we have to evaluate foo...
-
-# So when we do this:
-#    f(x) = cons(x, @lazyseq f(x + 1))
-# We have problems since this will just keep valuating...
-
-
-# This seems wrong. We are no longer caching values.
-# Argghh. Why is this so difficult. Maybe we can handle caching in rest(::Cons)
-
 type LazySeq
     realize::Function
 end
@@ -194,6 +183,22 @@ map(f::Function, s::Seqable) = cons(f(first(s)), @lazyseq map(f, rest(s)))
 
 function map(f::Function, s0::Seqable, s1::Seqable, ss::Seqable...)
     map(v -> apply(f, v), zip(s0, s1, ss...))
+end
+
+
+# Lazy character streams from IO objects.
+# ---------------------------------------
+
+function seq(io::IO)
+    try
+        cons(read(io, Char), @lazyseq seq(io))
+    catch err
+        if typeof(err) == EOFError
+            nothing
+        else
+            rethrow(err)
+        end
+    end
 end
 
 
