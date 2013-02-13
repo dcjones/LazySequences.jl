@@ -190,15 +190,12 @@ end
 # ---------------------------------------
 
 function seq(io::IO)
-    try
-        cons(read(io, Char), @lazyseq seq(io))
-    catch err
-        if typeof(err) == EOFError
-            nothing
-        else
-            rethrow(err)
-        end
-    end
+    eof(io) ? nothing : cons(read(io, Char), @lazyseq seq(io))
+end
+
+
+function seqlines(io::IO)
+    eof(io) ? nothing : cons(readline(io), @lazyseq seqlines(io))
 end
 
 

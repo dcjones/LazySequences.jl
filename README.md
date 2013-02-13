@@ -34,9 +34,41 @@ Here `fibs` is an infinite list of the Fibonacci numbers, which is realized as
 needed. This example hinges on the `lazyseq` macro which takes an expression
 that evaluates to a sequence, and hangs onto it until needed.
 
-Lazy sequences can also be thought of as an alternative to iterators, but the
-implementation here is backwards compatible: you can iterate through values in a
-sequence using a for loop, for example.
+Seq is a separate interface than Julia iterators, but they compatible:
+you can iterator through a sequence.
+
+
+## Seq as an iterator construction kit
+
+Iterators in Julia have an explicit state. Given that state, we should be able
+to recover the value at that point in the sequence. This way we can always get
+back to where we were in the iteration sequence if we hold onto a previous
+state. This results in iterators that are easy to reason about and use. The
+problem is, it can be sometimes quite difficult to define an explicit state
+iterator. This is where Seq comes in.
+
+Suppose we want to iterate over lines in a file. What do we keep as the
+iterators state? We could keep a file position and rewind the file as needed,
+but this is slow, and not all files are seekable. We could buffer every line
+that's been read, but this is inefficient in the majority of cases where we
+don't need to go backwards.
+
+With Seq we do this quite easily:
+```julia
+function seqlines(io::IO)
+    eof(io) ? nothing : cons(readline(io), @lazyseq seqlines(io))
+end
+```
+
+Not only can we iterate through lines, reading them as needed, with `for line in
+seqlines(file)`, but if we keep the head of the sequence, we can get back to the
+beginning of the file.
+
+The beauty of this approach, besides the fact that it's a one-liner, is that if
+you "lose your head" (i.e. don't save the head of the sequence), the garbage
+collector will free up the lines you've read but no longer need. It's on demand
+buffering, in a sense.
+
 
 ## Seq interface
 
