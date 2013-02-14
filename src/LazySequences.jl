@@ -1,5 +1,5 @@
 
-module Seq
+module LazySequences
 
 export seq, first, rest, cons, Seqable, @lazyseq, @lazycat, cat, map, zip, take
 

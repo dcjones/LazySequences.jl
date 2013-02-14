@@ -8,7 +8,7 @@ to create and process infinite lists.
 A canonical example is Fibonacci numbers.
 
 ```julia
-using Seq
+using LazySequences
 
 fibs = cat([0, 1], @lazyseq map(+, rest(fibs), fibs))
 
@@ -70,7 +70,7 @@ collector will free up the lines you've read but no longer need. It's on demand
 buffering, in a sense.
 
 
-## Seq interface
+## The Seqable interface
 
 Each node in a sequence must be something deriving from the abstract type
 `Seqable`. For such objects, there must be a `first` function that gives the
@@ -83,7 +83,7 @@ on [sequences](http://clojure.org/sequences).
 
 ## Macros
 
-There are two important macros in Seq.
+There are two important macros in LazySequences.
 
 `lazyseq` : Take an expression evaluating to a Seqable object or nothing, but
 don't evaluate it until needed.
