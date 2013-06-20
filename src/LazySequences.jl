@@ -3,11 +3,13 @@ module LazySequences
 
 export seq, first, rest, cons, Seqable, @lazyseq, @lazycat, cat, map, zip, take
 
-import Base.start, Base.next, Base.done, Base.map, Base.zip, Base.cat
+import Base.start, Base.next, Base.done, Base.map, Base.zip, Base.cat,
+       Base.first
 
 abstract Seqable
 
 seq(s::Seqable) = s
+seq(::Nothing) = nothing
 
 
 # Cons
@@ -36,7 +38,7 @@ cons(first, rest) = Cons(first, rest)
 # Common operations
 # -----------------
 
-type Cat <: Seqable
+immutable Cat <: Seqable
     a::Seqable
     b # Something with a seq function.
 end
@@ -60,7 +62,7 @@ cat(a, b) = Cat(seq(a), b)
 can(a, b, cs...) = Cat(seq(a), cat(b, cs...))
 
 
-type Take <: Seqable
+immutable Take <: Seqable
     n::Int
     a::Seqable
 end
@@ -87,7 +89,7 @@ end
 # Lazy-seq
 # --------
 
-type LazySeq
+immutable LazySeq
     realize::Function
 end
 
@@ -131,7 +133,7 @@ done(::Seqable, s::Any) = false
 # Realizations
 # ------------
 
-type AbstractArraySeq <: Seqable
+immutable AbstractArraySeq <: Seqable
     xs::AbstractArray
     i::Int
 end
@@ -147,7 +149,7 @@ rest(s::AbstractArraySeq) =
     s.i >= length(s.xs) ? nothing :  AbstractArraySeq(s.xs, s.i + 1)
 
 
-type Zip <: Seqable
+immutable Zip <: Seqable
     ts::Vector
 end
 
