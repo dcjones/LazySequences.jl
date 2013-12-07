@@ -15,7 +15,7 @@ seq(::Nothing) = nothing
 # Cons
 # ----
 
-immutable Cons <: Seqable
+type Cons <: Seqable
     first
 
     # This must be something with a seq function.
@@ -46,14 +46,6 @@ end
 
 first(s::Cat) = first(s.a)
 
-function getindex(s::Cat, n::Int64)
-    sequence = Any[]
-    for i in take(n, s)
-        push!(sequence, i)
-    end
-    sequence[end]
-end
-
 function rest(s::Cat)
     a = rest(s.a)
     if a === nothing
@@ -63,6 +55,13 @@ function rest(s::Cat)
     end
 end
 
+function getindex(s::Cat, n::Int64)
+    sequence = Any[]
+    for i in take(n, s)
+        push!(sequence, i)
+    end
+    sequence[end]
+end
 
 cat(a) = seq(a)
 cat(a, b) = Cat(seq(a), b)
