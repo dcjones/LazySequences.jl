@@ -15,7 +15,7 @@ seq(::Nothing) = nothing
 # Cons
 # ----
 
-type Cons <: Seqable
+immutable Cons <: Seqable
     first
 
     # This must be something with a seq function.
@@ -38,7 +38,7 @@ cons(first, rest) = Cons(first, rest)
 # Common operations
 # -----------------
 
-immutable Cat <: Seqable
+type Cat <: Seqable
     a::Seqable
     b # Something with a seq function.
 end
@@ -46,6 +46,13 @@ end
 
 first(s::Cat) = first(s.a)
 
+function getindex(s::Cat, n::Int64)
+    sequence = Any[]
+    for i in take(n, s)
+        push!(sequence, i)
+    end
+    sequence[end]
+end
 
 function rest(s::Cat)
     a = rest(s.a)
@@ -202,4 +209,3 @@ end
 
 
 end # end module
-
