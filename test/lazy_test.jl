@@ -17,3 +17,5 @@ ct = cat([1], [42])
 fibs = cat([0, 1], @lazyseq map(+, rest(fibs), fibs))
 @assert fibs[1] == 0
 @assert fibs[2] == 1
+@assert fibs[3] == 1
+@assert fibs[4] == 2
