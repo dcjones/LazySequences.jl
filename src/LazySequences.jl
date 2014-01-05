@@ -38,14 +38,13 @@ cons(first, rest) = Cons(first, rest)
 # Common operations
 # -----------------
 
-immutable Cat <: Seqable
+type Cat <: Seqable
     a::Seqable
     b # Something with a seq function.
 end
 
 
 first(s::Cat) = first(s.a)
-
 
 function rest(s::Cat)
     a = rest(s.a)
@@ -56,6 +55,13 @@ function rest(s::Cat)
     end
 end
 
+function getindex(s::Cat, n::Int64)
+    sequence = Any[]
+    for i in take(n, s)
+        push!(sequence, i)
+    end
+    sequence[end]
+end
 
 cat(a) = seq(a)
 cat(a, b) = Cat(seq(a), b)
@@ -202,4 +208,3 @@ end
 
 
 end # end module
-
